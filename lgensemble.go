@@ -52,6 +52,21 @@ func (e *lgEnsemble) predictInner(fvals []float64, nEstimators int, predictions 
 	}
 }
 
+func (e *lgEnsemble) predictInnerSparse(fvals map[uint32]float64, nEstimators int, predictions []float64, startIndex int) {
+	for k := 0; k < e.nClasses; k++ {
+		predictions[startIndex+k] = 0.0
+	}
+	coef := 1.0
+	if e.averageOutput {
+		coef = 1.0 / float64(nEstimators)
+	}
+	for i := 0; i < nEstimators; i++ {
+		for k := 0; k < e.nClasses; k++ {
+			predictions[startIndex+k] += e.Trees[i*e.nClasses+k].predictSparse(fvals) * coef
+		}
+	}
+}
+
 func (e *lgEnsemble) adjustNEstimators(nEstimators int) int {
 	if nEstimators > 0 {
 		nEstimators = util.MinInt(nEstimators, e.NEstimators())

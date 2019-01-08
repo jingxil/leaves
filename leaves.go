@@ -17,6 +17,7 @@ type ensembleBaseInterface interface {
 	Name() string
 	adjustNEstimators(nEstimators int) int
 	predictInner(fvals []float64, nEstimators int, predictions []float64, startIndex int)
+	predictInnerSparse(fvals map[uint32]float64, nEstimators int, predictions []float64, startIndex int)
 	resetFVals(fvals []float64)
 }
 
@@ -42,6 +43,21 @@ func (e *Ensemble) PredictSingle(fvals []float64, nEstimators int) float64 {
 	ret := [1]float64{0.0}
 
 	e.predictInner(fvals, nEstimators, ret[:], 0)
+	return ret[0]
+}
+
+// PredictSingleSparse calculates prediction for single class model.
+func (e *Ensemble) PredictSingleSparse(fvals map[uint32]float64, nFeatures int, nEstimators int) float64 {
+	if e.NClasses() != 1 {
+		return 0.0
+	}
+	if e.NFeatures() > nFeatures {
+		return 0.0
+	}
+	nEstimators = e.adjustNEstimators(nEstimators)
+	ret := [1]float64{0.0}
+
+	e.predictInnerSparse(fvals, nEstimators, ret[:], 0)
 	return ret[0]
 }
 

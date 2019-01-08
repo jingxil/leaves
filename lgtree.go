@@ -93,6 +93,28 @@ func (t *lgTree) predict(fvals []float64) float64 {
 	}
 }
 
+func (t *lgTree) predictSparse(fvals map[uint32]float64) float64 {
+	if len(t.nodes) == 0 {
+		return t.leafValues[0]
+	}
+	idx := uint32(0)
+	for {
+		node := &t.nodes[idx]
+		left := t.decision(node, fvals[node.Feature])
+		if left {
+			if node.Flags&leftLeaf > 0 {
+				return t.leafValues[node.Left]
+			}
+			idx = node.Left
+		} else {
+			if node.Flags&rightLeaf > 0 {
+				return t.leafValues[node.Right]
+			}
+			idx++
+		}
+	}
+}
+
 func (t *lgTree) findInBitset(idx uint32, pos uint32) bool {
 	i1 := pos / 32
 	idxS := t.catBoundaries[idx]

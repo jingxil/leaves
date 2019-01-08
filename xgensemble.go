@@ -57,6 +57,17 @@ func (e *xgEnsemble) predictInner(fvals []float64, nEstimators int, predictions 
 	}
 }
 
+func (e *xgEnsemble) predictInnerSparse(fvals map[uint32]float64, nEstimators int, predictions []float64, startIndex int) {
+	for k := 0; k < e.nClasses; k++ {
+		predictions[startIndex+k] = e.BaseScore
+		for i := 0; i < nEstimators; i++ {
+			if e.TreeInfo[i] == k {
+				predictions[startIndex+k] += e.Trees[i].predictSparse(fvals) * e.WeightDrop[i]
+			}
+		}
+	}
+}
+
 func (e *xgEnsemble) resetFVals(fvals []float64) {
 	for j := 0; j < len(fvals); j++ {
 		fvals[j] = math.NaN()

@@ -38,6 +38,15 @@ func (e *xgLinear) predictInner(fvals []float64, nIterations int, predictions []
 	}
 }
 
+func (e *xgLinear) predictInnerSparse(fvals map[uint32]float64, nEstimators int, predictions []float64, startIndex int) {
+	for k := 0; k < e.nClasses; k++ {
+		predictions[startIndex+k] = e.BaseScore + float64(e.Weights[e.nClasses*e.NumFeature+k])
+		for i := 0; i < e.NumFeature; i++ {
+			predictions[startIndex+k] += fvals[uint32(i)] * float64(e.Weights[e.nClasses*i+k])
+		}
+	}
+}
+
 func (e *xgLinear) resetFVals(fvals []float64) {
 	for j := 0; j < len(fvals); j++ {
 		fvals[j] = 0.0
