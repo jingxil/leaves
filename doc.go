@@ -42,9 +42,9 @@ predict_breast_cancer_model.go:
 	import (
 		"fmt"
 
-		"github.com/dmitryikh/leaves"
-		"github.com/dmitryikh/leaves/mat"
-		"github.com/dmitryikh/leaves/util"
+		"github.com/jingxil/leaves"
+		"github.com/jingxil/leaves/mat"
+		"github.com/jingxil/leaves/util"
 	)
 
 	func main() {
@@ -127,9 +127,9 @@ predict_iris_model.go:
 	import (
 		"fmt"
 
-		"github.com/dmitryikh/leaves"
-		"github.com/dmitryikh/leaves/mat"
-		"github.com/dmitryikh/leaves/util"
+		"github.com/jingxil/leaves"
+		"github.com/jingxil/leaves/mat"
+		"github.com/jingxil/leaves/util"
 	)
 
 	func main() {

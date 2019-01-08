@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dmitryikh/leaves/internal/xgbin"
+	"github.com/jingxil/leaves/internal/xgbin"
 )
 
 // XGBLinearFromReader reads  XGBoost's 'gblinear' model from `reader`
