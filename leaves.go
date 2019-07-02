@@ -18,6 +18,8 @@ type ensembleBaseInterface interface {
 	adjustNEstimators(nEstimators int) int
 	predictInner(fvals []float64, nEstimators int, predictions []float64, startIndex int)
 	predictInnerSparse(fvals map[uint32]float64, nEstimators int, predictions []float64, startIndex int)
+	predictInnerLeafSparse(fvals map[uint32]float64, nEstimators int, ret []int)
+	getLeafSize(nEstimators int) int
 	resetFVals(fvals []float64)
 }
 
@@ -59,6 +61,20 @@ func (e *Ensemble) PredictSingleSparse(fvals map[uint32]float64, nFeatures int, 
 
 	e.predictInnerSparse(fvals, nEstimators, ret[:], 0)
 	return ret[0]
+}
+
+// PredictSingleLeafSparse output leaf indexes
+func (e *Ensemble) PredictSingleLeafSparse(fvals map[uint32]float64, ret []int) []int {
+	nEstimators := e.adjustNEstimators(0)
+	if len(ret) != nEstimators {
+		ret = make([]int, nEstimators)
+	}
+	e.predictInnerLeafSparse(fvals, nEstimators, ret)
+	return ret
+}
+
+func (e *Ensemble) GetLeafSize() int {
+	return e.getLeafSize(e.adjustNEstimators(0))
 }
 
 // Predict calculates single prediction for one or multiclass ensembles. Only

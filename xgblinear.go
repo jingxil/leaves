@@ -47,6 +47,25 @@ func (e *xgLinear) predictInnerSparse(fvals map[uint32]float64, nEstimators int,
 	}
 }
 
+func (e *xgLinear) predictInnerLeafSparse(fvals map[uint32]float64, nEstimators int, ret []int) {
+	predictions := make([]float64, e.nClasses)
+	e.predictInnerSparse(fvals, nEstimators, predictions, 0)
+
+	maxIndex := 0
+	maxVal := predictions[0]
+	for i := 1; i < e.nClasses; i++ {
+		if predictions[i] > maxVal {
+			maxIndex = i
+			maxVal = predictions[i]
+		}
+	}
+	ret[0] = maxIndex
+}
+
+func (e *xgLinear) getLeafSize(nEstimators int) int {
+	return e.nClasses
+}
+
 func (e *xgLinear) resetFVals(fvals []float64) {
 	for j := 0; j < len(fvals); j++ {
 		fvals[j] = 0.0

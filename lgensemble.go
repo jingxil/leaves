@@ -37,6 +37,15 @@ func (e *lgEnsemble) Name() string {
 	return e.name
 }
 
+func (e *lgEnsemble) adjustNEstimators(nEstimators int) int {
+	if nEstimators > 0 {
+		nEstimators = util.MinInt(nEstimators, e.NEstimators())
+	} else {
+		nEstimators = e.NEstimators()
+	}
+	return nEstimators
+}
+
 func (e *lgEnsemble) predictInner(fvals []float64, nEstimators int, predictions []float64, startIndex int) {
 	for k := 0; k < e.nClasses; k++ {
 		predictions[startIndex+k] = 0.0
@@ -67,13 +76,21 @@ func (e *lgEnsemble) predictInnerSparse(fvals map[uint32]float64, nEstimators in
 	}
 }
 
-func (e *lgEnsemble) adjustNEstimators(nEstimators int) int {
-	if nEstimators > 0 {
-		nEstimators = util.MinInt(nEstimators, e.NEstimators())
-	} else {
-		nEstimators = e.NEstimators()
+func (e *lgEnsemble) predictInnerLeafSparse(fvals map[uint32]float64, nEstimators int, ret []int) {
+	cnt := 0
+	for i := 0; i < nEstimators; i++ {
+		idx := e.Trees[i].predictLeafSparse(fvals)
+		ret[i] = idx + cnt
+		cnt += e.Trees[i].nLeaves()
 	}
-	return nEstimators
+}
+
+func (e *lgEnsemble) getLeafSize(nEstimators int) int {
+	cnt := 0
+	for i := 0; i < nEstimators; i++ {
+		cnt += e.Trees[i].nLeaves()
+	}
+	return cnt
 }
 
 func (e *lgEnsemble) resetFVals(fvals []float64) {

@@ -68,6 +68,23 @@ func (e *xgEnsemble) predictInnerSparse(fvals map[uint32]float64, nEstimators in
 	}
 }
 
+func (e *xgEnsemble) predictInnerLeafSparse(fvals map[uint32]float64, nEstimators int, ret []int) {
+	cnt := 0
+	for i := 0; i < nEstimators; i++ {
+		idx := e.Trees[i].predictLeafSparse(fvals)
+		ret[i] = idx + cnt
+		cnt += e.Trees[i].nLeaves()
+	}
+}
+
+func (e *xgEnsemble) getLeafSize(nEstimators int) int {
+	cnt := 0
+	for i := 0; i < nEstimators; i++ {
+		cnt += e.Trees[i].nLeaves()
+	}
+	return cnt
+}
+
 func (e *xgEnsemble) resetFVals(fvals []float64) {
 	for j := 0; j < len(fvals); j++ {
 		fvals[j] = math.NaN()
